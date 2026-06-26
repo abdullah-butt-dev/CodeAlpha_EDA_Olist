@@ -372,7 +372,7 @@ with t1:
         name="Orders", line=dict(color=AMBER, width=2.5), mode="lines+markers",
         marker=dict(size=5),
         hovertemplate="<b>%{x}</b><br>Orders: %{y:,}<extra></extra>"), secondary_y=True)
-        apply_theme(fig, h=320, hovermode="x unified", legend=True,
+    apply_theme(fig, h=320, hovermode="x unified", legend=True,
                 leg={"orientation":"h","yanchor":"bottom","y":1.02,"x":0},
                 title="Monthly Revenue Trends & Order Trajectory")
     fig.update_yaxes(gridcolor=BORDER, tickfont=dict(color=MUTED), secondary_y=False)
