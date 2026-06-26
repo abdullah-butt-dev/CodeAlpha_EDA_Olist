@@ -19,12 +19,12 @@ NAVY  = "#0D1B2A"; PANEL = "#132336"; BORDER = "#1E3A52"
 TEAL  = "#00C2CB"; AMBER = "#F5A623"; ROSE   = "#E8445A"
 WHITE = "#F0F4F8"; MUTED = "#7A9BB5"; OK     = "#2DD4BF"
 
-def apply_theme(fig, h=340, hovermode="closest", legend=False, leg=None):
+def apply_theme(fig, h=340, hovermode="closest", legend=False, leg=None, title=None):
     kw = dict(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         font=dict(family="Inter,sans-serif", color=WHITE, size=13),
-        title_font=dict(color=WHITE, size=15),
-        margin=dict(l=10, r=10, t=38, b=10),
+        title=dict(text=title, font=dict(color=WHITE, size=16, family="Space Grotesk,sans-serif"), x=0.01),
+        margin=dict(l=10, r=10, t=55 if title else 38, b=10), # Extra top margin if there is a title
         height=h, hovermode=hovermode,
         xaxis=dict(gridcolor=BORDER, linecolor=BORDER,
                    tickfont=dict(color=MUTED, size=12)),
@@ -372,8 +372,9 @@ with t1:
         name="Orders", line=dict(color=AMBER, width=2.5), mode="lines+markers",
         marker=dict(size=5),
         hovertemplate="<b>%{x}</b><br>Orders: %{y:,}<extra></extra>"), secondary_y=True)
-    apply_theme(fig, h=320, hovermode="x unified", legend=True,
-                leg={"orientation":"h","yanchor":"bottom","y":1.02,"x":0})
+        apply_theme(fig, h=320, hovermode="x unified", legend=True,
+                leg={"orientation":"h","yanchor":"bottom","y":1.02,"x":0},
+                title="Monthly Revenue Trends & Order Trajectory")
     fig.update_yaxes(gridcolor=BORDER, tickfont=dict(color=MUTED), secondary_y=False)
     fig.update_yaxes(gridcolor="rgba(0,0,0,0)", tickfont=dict(color=MUTED), secondary_y=True)
     st.plotly_chart(fig, use_container_width=True)
@@ -401,7 +402,7 @@ with t1:
         fig2 = px.bar(sr, x="customer_state", y="revenue",
             color="avg_ticket", color_continuous_scale=["#1E3A52", TEAL],
             labels={"revenue":"Revenue (BRL)","customer_state":"","avg_ticket":"Avg Ticket"})
-        apply_theme(fig2, h=290)
+        apply_theme(fig2, h=290, title="Top States by Total Revenue Generation")
         st.plotly_chart(fig2, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -417,7 +418,7 @@ with t1:
                 color_discrete_sequence=[TEAL, AMBER, ROSE, MUTED])
             fig3.update_traces(textposition="outside", textinfo="label+percent",
                 hovertemplate="<b>%{label}</b><br>R$%{value:,.0f}<extra></extra>")
-            apply_theme(fig3, h=290, legend=True, leg={"orientation":"v","x":1,"y":.5})
+            apply_theme(fig3, h=290, legend=True, leg={"orientation":"v","x":1,"y":.5}, title="Revenue Distribution by Payment Method")
             st.plotly_chart(fig3, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
@@ -440,7 +441,7 @@ with t1:
     fig4 = px.imshow(pivot,
         color_continuous_scale=[[0,PANEL],[.35,BORDER],[1,TEAL]],
         aspect="auto", labels=dict(x="Hour of Day", y="", color="Orders"))
-    apply_theme(fig4, h=230)
+    apply_theme(fig4, h=230, title="Hourly Order Density by Day of Week")
     st.plotly_chart(fig4, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -467,7 +468,7 @@ with t2:
             labels={"revenue":"Revenue (BRL)", cc:""})
         fig.update_traces(textposition="outside")
         fig.update_layout(yaxis={"categoryorder":"total ascending"})
-        apply_theme(fig, h=390)
+        apply_theme(fig, h=390, title="Top Product Categories by Revenue Contribution")
         st.plotly_chart(fig, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -483,7 +484,7 @@ with t2:
             labels={"orders":"Order Count", cc:"", "avg_review":"Avg Rating"})
         fig2.update_traces(textposition="outside")
         fig2.update_layout(yaxis={"categoryorder":"total ascending"})
-        apply_theme(fig2, h=390)
+        apply_theme(fig2, h=390, title="Top Categories by Sales Volume vs. Ratings")
         st.plotly_chart(fig2, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -498,7 +499,7 @@ with t2:
             labels={"revenue":"Total Revenue (BRL)","avg_review":"Avg Review","avg_price":"Avg Price"})
         fig3.add_vline(x=sc2["revenue"].median(),    line_dash="dot", line_color=MUTED, opacity=.5)
         fig3.add_hline(y=sc2["avg_review"].median(), line_dash="dot", line_color=MUTED, opacity=.5)
-        apply_theme(fig3, h=360)
+        apply_theme(fig3, h=360, title="Category Viability Matrix (Revenue vs. Satisfaction)")
         st.plotly_chart(fig3, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -516,7 +517,7 @@ with t2:
                 color="freight_pct", color_continuous_scale=[OK, AMBER, ROSE],
                 labels={cc:"","freight_pct":"Freight % of Price"})
             fig4.update_layout(xaxis_tickangle=-35)
-            apply_theme(fig4, h=310)
+            apply_theme(fig4, h=310, title="Freight Value Burden relative to Product Price")
             st.plotly_chart(fig4, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
@@ -539,7 +540,7 @@ with t3:
                 annotation_position="top right")
             fig.add_vline(x=mn, line_dash="dot", line_color=ROSE,
                 annotation_text=f"Mean {mn:.0f}d", annotation_font_color=ROSE)
-            apply_theme(fig, h=290)
+            apply_theme(fig, h=290, title="Distribution of Final Customer Delivery Times")
             st.plotly_chart(fig, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
@@ -558,7 +559,7 @@ with t3:
                 labels={"customer_state":"","p":"On-Time %"})
             fig2.add_hline(y=nat, line_dash="dash", line_color=WHITE, opacity=.4,
                 annotation_text=f"Avg {nat:.1f}%", annotation_font_color=MUTED)
-            apply_theme(fig2, h=290)
+            apply_theme(fig2, h=290, title="On-Time Delivery Performance by Customer State")
             st.plotly_chart(fig2, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
@@ -575,7 +576,7 @@ with t3:
         labels={"delivery_bucket":"Delivery Window","avg":"Avg Review Score"})
     fig3.update_traces(textposition="outside")
     fig3.update_layout(yaxis_range=[0,5.5], coloraxis_showscale=False)
-    apply_theme(fig3, h=270)
+    apply_theme(fig3, h=270, title="Customer Review Trends by Delivery Speed Bracket")
     st.plotly_chart(fig3, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -604,7 +605,7 @@ with t3:
         fig4.update_traces(textposition="outside")
         fig4.update_layout(coloraxis_showscale=False,
                            yaxis_range=[0, sd["count"].max()*1.15])
-        apply_theme(fig4, h=280)
+        apply_theme(fig4, h=280, title="Overall Customer Review Score Distribution")
         st.plotly_chart(fig4, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -626,7 +627,7 @@ with t3:
                 fig5.add_trace(go.Scatter(x=[0,mx], y=[0,mx], mode="lines",
                     line=dict(color=AMBER, dash="dash", width=1.5),
                     showlegend=False))
-                apply_theme(fig5, h=280)
+                apply_theme(fig5, h=280, title="Logistical Variance: Actual vs. Estimated Delivery")
                 st.plotly_chart(fig5, use_container_width=True)
                 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -681,7 +682,7 @@ with t4:
             fig.add_vline(x=mr, line_dash="dot", line_color=MUTED, opacity=.4)
             fig.add_hline(y=ms, line_dash="dot", line_color=MUTED, opacity=.4)
             apply_theme(fig, h=400, legend=True,
-                        leg={"orientation":"h","yanchor":"bottom","y":1.01,"x":0})
+                        leg={"orientation":"h","yanchor":"bottom","y":1.01,"x":0}, title="Seller Performance Quadrant & Health Mapping")
             st.plotly_chart(fig, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
@@ -705,7 +706,7 @@ with t4:
                     labels={"revenue":"Revenue (BRL)","seller_id":"","avg_rating":"Avg Rating"})
                 fig2.update_traces(textposition="outside")
                 fig2.update_layout(yaxis={"categoryorder":"total ascending"})
-                apply_theme(fig2, h=380)
+                apply_theme(fig2, h=380, title="Top 15 Sellers Ranked by Gross Platform Revenue")
                 st.plotly_chart(fig2, use_container_width=True)
                 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -720,7 +721,7 @@ with t4:
                         color_discrete_map=cm, opacity=.7,
                         labels={"avg_del":"Avg Delivery Days","avg_rating":"Avg Rating"})
                     apply_theme(fig3, h=380, legend=True,
-                                leg={"orientation":"h","yanchor":"bottom","y":1.01,"x":0})
+                                leg={"orientation":"h","yanchor":"bottom","y":1.01,"x":0}, title="Impact of Seller Shipping Latency on Review Scores")
                     st.plotly_chart(fig3, use_container_width=True)
                     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -773,7 +774,7 @@ with t5:
             text=fr["customers"].apply(num),
             labels={"orders":"Orders Placed","customers":"Customers"})
         fig.update_traces(textposition="outside")
-        apply_theme(fig, h=280)
+        apply_theme(fig, h=280, title="Customer Purchase Frequency Distribution")
         st.plotly_chart(fig, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -787,7 +788,7 @@ with t5:
                 labels={"spent":"Total Spend (BRL)"})
             fig2.add_vline(x=la, line_dash="dash", line_color=AMBER,
                 annotation_text=f"Avg {brl(la)}", annotation_font_color=AMBER)
-            apply_theme(fig2, h=280)
+            apply_theme(fig2, h=280, title="Customer Lifetime Value (LTV) Spend Distribution")
             st.plotly_chart(fig2, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
@@ -807,7 +808,7 @@ with t5:
         fig3 = px.scatter(rs, x="recency", y="monetary", size="frequency", color="frequency",
             color_continuous_scale=["#1E3A52", TEAL], opacity=.55, size_max=20,
             labels={"recency":"Days Since Last Order","monetary":"Total Spend (BRL)","frequency":"Orders"})
-        apply_theme(fig3, h=350)
+        apply_theme(fig3, h=350, title="RFM Matrix: Customer Recency vs. Value Engagement")
         st.plotly_chart(fig3, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -823,7 +824,7 @@ with t5:
         text=geo["orders"].apply(num),
         labels={"customer_state":"","orders":"Orders","avg_spend":"Avg Spend"})
     fig4.update_traces(textposition="outside")
-    apply_theme(fig4, h=270)
+    apply_theme(fig4, h=270, title="Geographic Order Densities & Average Spend Profile")
     st.plotly_chart(fig4, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
