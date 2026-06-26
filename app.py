@@ -14,6 +14,14 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+st.markdown("""
+    <style>
+    footer {visibility: hidden;}
+    .stAppFooter {display: none !important;}
+    div[data-testid="stFooter"] {display: none !important;}
+    </style>
+""", unsafe_allow_html=True)
+
 # ── Tokens ──────────────────────────────────────────────────────
 NAVY  = "#0D1B2A"; PANEL = "#132336"; BORDER = "#1E3A52"
 TEAL  = "#00C2CB"; AMBER = "#F5A623"; ROSE   = "#E8445A"
