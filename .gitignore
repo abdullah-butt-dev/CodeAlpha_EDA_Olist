@@ -1,3 +1,4 @@
-data/
+data/*
+!data/olist_master_clean.csv
 venv/
 __pycache__/
